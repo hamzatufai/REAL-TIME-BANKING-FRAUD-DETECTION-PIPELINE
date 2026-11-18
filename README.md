@@ -1,6 +1,6 @@
 # Real-Time Banking Fraud Detection Pipeline
 
-A learning and portfolio project. It streams **synthetic** banking transactions through Kafka, scores them with an explainable rule set, stores raw and curated data in AWS S3, loads the curated data into Snowflake, and builds tested analytics models with dbt Core.
+A learning and portfolio project by **Hamza Tufail**. It streams **synthetic** banking transactions through Kafka, scores them with an explainable rule set, stores raw and curated data in AWS S3, loads the curated data into Snowflake, and builds tested analytics models with dbt Core.
 
 > Synthetic data only. The risk score is a demonstration heuristic, not a production fraud model.
 
@@ -64,7 +64,7 @@ pip install -r requirements.txt
 # One-time Snowflake setup: run snowflake/01_create_objects.sql, then 02_security_roles.sql
 python -m scripts.check_snowflake
 
-# Terminal 1: Kafka broker (see SETUP_GUIDE.md step 7)
+# Terminal 1: Kafka broker (see SETUP_GUIDE.md step 8)
 # Terminal 2: consumer
 python -m consumer.fraud_consumer
 # Terminal 3: producer
@@ -123,3 +123,13 @@ Bands: LOW 0–29, MEDIUM 30–59, HIGH 60–100 (`is_fraud_flag` = HIGH).
 - Keep the S3 bucket private with Block Public Access enabled and SSE-S3 encryption.
 - Never commit `.env`, AWS keys, or Snowflake passwords.
 - Use the `FRAUD_ROLE` for the app. Use ACCOUNTADMIN only for the one-time setup in `snowflake/`.
+
+## Author
+
+**Hamza Tufail**
+BS Software Engineering, Sindh Madressatul Islam University
+GitHub: [github.com/hamzatufai](https://github.com/hamzatufai)
+
+## License
+
+Learning and portfolio use. Add a license file if you plan to share or reuse the code.
