@@ -81,8 +81,8 @@ Superset dashboard   (optional)
 
 | Requirement | Version | Verify with |
 |---|---|---|
-| Linux (Ubuntu 24.04 recommended, or WSL2) | — | `lsb_release -a` |
-| Python | 3.10 or later | `python3 --version` |
+| Windows 10/11 with Git Bash (Git for Windows) | — | `uname -a` in Git Bash |
+| Python | 3.10 or later | `python --version` |
 | Java (for Kafka) | 17 or later | `java -version` |
 | Git | any | `git --version` |
 | AWS CLI | v2 | `aws --version` |
@@ -91,9 +91,16 @@ Superset dashboard   (optional)
 
 Install the system packages once:
 
+Install these once from the official installers (Git Bash does not use `apt`):
+
+- Git for Windows (includes Git Bash): https://git-scm.com/downloads
+- Python 3.10+: https://www.python.org/downloads/ (tick **Add python.exe to PATH**)
+- Java 17+ (Temurin): https://adoptium.net/
+
 ```bash
-sudo apt update
-sudo apt install -y python3 python3-venv python3-pip build-essential git unzip openjdk-17-jdk-headless
+python --version
+java -version
+git --version
 ```
 
 Cost note: S3 and Snowflake are metered services. Use a few thousand synthetic events, keep one bucket, and keep the Snowflake warehouse set to auto-suspend.
@@ -198,7 +205,7 @@ chmod +x scripts/create_kafka_topics.sh scripts/run_dbt.sh
 Each file is filled with the code from the project archive (`realtime-banking-fraud-detection.zip`). To use the archive instead of creating files by hand:
 
 ```bash
-unzip realtime-banking-fraud-detection.zip -d ~/projects
+powershell.exe -Command "Expand-Archive -Path realtime-banking-fraud-detection.zip -DestinationPath $HOME/projects -Force"
 cd ~/projects/realtime-banking-fraud-detection
 ```
 
@@ -222,8 +229,8 @@ find . -path ./.venv -prune -o -type f -print | sort
 
 ```bash
 cd ~/projects/realtime-banking-fraud-detection
-python3 -m venv .venv
-source .venv/bin/activate
+python -m venv .venv
+source .venv/Scripts/activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
@@ -308,9 +315,13 @@ Rows in RAW.TRANSACTIONS: 0
 Install and configure the AWS CLI:
 
 ```bash
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
-unzip -q awscliv2.zip
-sudo ./aws/install
+curl "https://awscli.amazonaws.com/AWSCLIV2.msi" -o AWSCLIV2.msi
+msiexec.exe /i AWSCLIV2.msi
+```
+
+Close and reopen Git Bash, then check the version:
+
+```bash
 aws --version
 
 aws configure              # access key profile
@@ -377,8 +388,8 @@ Expected output: `banking.invalid-transactions` and `banking.transactions` are l
 dbt uses its own virtual environment because its dependencies differ from the application code.
 
 ```bash
-python3 -m venv ~/venvs/dbt-fraud
-source ~/venvs/dbt-fraud/bin/activate
+python -m venv ~/venvs/dbt-fraud
+source ~/venvs/dbt-fraud/Scripts/activate
 pip install --upgrade pip
 pip install -r dbt_fraud/requirements.txt
 dbt --version
@@ -406,7 +417,7 @@ Terminal 2, consumer:
 
 ```bash
 cd ~/projects/realtime-banking-fraud-detection
-source .venv/bin/activate
+source .venv/Scripts/activate
 python -m consumer.fraud_consumer
 ```
 
@@ -414,7 +425,7 @@ Terminal 3, producer:
 
 ```bash
 cd ~/projects/realtime-banking-fraud-detection
-source .venv/bin/activate
+source .venv/Scripts/activate
 python -m producer.generate_transactions
 ```
 
@@ -438,7 +449,7 @@ silver/transactions/year=YYYY/month=MM/day=DD/batch-....parquet
 ### 7.3 Load Silver data into Snowflake
 
 ```bash
-source .venv/bin/activate
+source .venv/Scripts/activate
 python -m loader.load_s3_to_snowflake
 ```
 
@@ -464,7 +475,7 @@ SELECT * FROM BANKING_FRAUD.RAW.LOADED_FILES ORDER BY LOADED_AT DESC;
 ### 7.4 Build dbt models and tests
 
 ```bash
-source ~/venvs/dbt-fraud/bin/activate
+source ~/venvs/dbt-fraud/Scripts/activate
 cd ~/projects/realtime-banking-fraud-detection
 
 ./scripts/run_dbt.sh debug     # test the connection
@@ -489,7 +500,7 @@ SELECT * FROM BANKING_FRAUD.ANALYTICS.MART_DAILY_FRAUD_SUMMARY ORDER BY TRANSACT
 Run the unit tests from the project root:
 
 ```bash
-source .venv/bin/activate
+source .venv/Scripts/activate
 python -m pytest -q
 ```
 
